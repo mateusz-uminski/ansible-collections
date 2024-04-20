@@ -13,6 +13,10 @@
     "consul": {
       "release-type": "simple",
       "component": "consul"
+    },
+    "grafana": {
+      "release-type": "simple",
+      "component": "grafana"
     }
   }
 }
