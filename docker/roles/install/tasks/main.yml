@@ -1,0 +1,25 @@
+- name: include debian specific tasks
+  ansible.builtin.include_tasks: debian.yaml
+  when: ansible_os_family == "Debian"
+
+- name: include redhat specific tasks
+  ansible.builtin.include_tasks: redhat.yaml
+  when: ansible_os_family == "RedHat" and ansible_distribution != "Amazon"
+
+- name: include amazonlinux specific tasks
+  ansible.builtin.include_tasks: amazonlinux.yaml
+  when: ansible_os_family == "RedHat" and ansible_distribution == "Amazon"
+
+- name: ensure docker is started and enabled
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+  become: true
+
+- name: ensure containerd is started and enabled
+  ansible.builtin.service:
+    name: containerd
+    state: started
+    enabled: true
+  become: true

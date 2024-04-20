@@ -1,0 +1,6 @@
+- name: install docker packages
+  ansible.builtin.dnf:
+    name:
+      - docker
+    state: present
+  become: true
