@@ -1,0 +1,20 @@
+- name: deploy a temporary consul server
+  hosts: controlplane
+  gather_facts: true
+  vars:
+    consul_server_mode: true
+  tasks:
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/install  # noqa: role-name[path]
+
+- name: converge
+  hosts: clients
+  gather_facts: true
+  vars:
+    consul_server_mode: false
+    consul_servers: ["server:8301"]
+  tasks:
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/install  # noqa: role-name[path]
