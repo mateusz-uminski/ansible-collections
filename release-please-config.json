@@ -5,6 +5,10 @@
     "docker": {
       "release-type": "simple",
       "component": "docker"
+    },
+    "haproxy": {
+      "release-type": "simple",
+      "component": "haproxy"
     }
   }
 }

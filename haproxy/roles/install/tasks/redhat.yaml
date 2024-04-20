@@ -1,0 +1,5 @@
+- name: install haproxy
+  ansible.builtin.dnf:
+    name: haproxy
+    state: present
+  become: true
