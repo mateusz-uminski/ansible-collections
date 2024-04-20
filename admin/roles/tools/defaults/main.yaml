@@ -1,0 +1,20 @@
+admin_common_packages:
+  - htop
+  - traceroute
+  - dnsutils
+  - gpg
+  - vim
+  - tcpdump
+
+admin_debian_packages:
+  - iputils-ping
+  - iproute2
+
+admin_redhat_packages:
+  - epel-release
+  - iputils
+
+admin_amazon_packages:
+  - iputils
+
+admin_common_additional_packages: []

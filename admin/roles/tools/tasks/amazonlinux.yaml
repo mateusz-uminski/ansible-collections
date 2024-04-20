@@ -1,0 +1,17 @@
+- name: install packages specific to amazon
+  ansible.builtin.dnf:
+    name: "{{ admin_amazon_packages }}"
+    state: present
+  become: true
+
+- name: install common packages
+  ansible.builtin.dnf:
+    name: "{{ admin_common_packages }}"
+    state: present
+  become: true
+
+- name: install additional packages
+  ansible.builtin.dnf:
+    name: "{{ admin_common_additional_packages }}"
+    state: present
+  become: true

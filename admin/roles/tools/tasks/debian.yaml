@@ -1,0 +1,17 @@
+- name: install packages specific to debian
+  ansible.builtin.apt:
+    name: "{{ admin_debian_packages }}"
+    state: present
+  become: true
+
+- name: install common packages
+  ansible.builtin.apt:
+    name: "{{ admin_common_packages }}"
+    state: present
+  become: true
+
+- name: install additional packages
+  ansible.builtin.apt:
+    name: "{{ admin_common_additional_packages }}"
+    state: present
+  become: true
