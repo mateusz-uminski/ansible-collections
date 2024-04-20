@@ -1,0 +1,6 @@
+[flake8]
+exclude =
+    .git,
+    .github,
+    venv,
+max-complexity = 10

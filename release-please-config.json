@@ -1,0 +1,10 @@
+{
+  "separate-pull-requests": true,
+
+  "packages": {
+    "docker": {
+      "release-type": "simple",
+      "component": "docker"
+    }
+  }
+}
