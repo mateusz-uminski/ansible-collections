@@ -1,0 +1,78 @@
+- name: include debian specific tasks
+  ansible.builtin.include_tasks: debian.yaml
+  when: ansible_os_family | lower == "debian"
+
+- name: include redhat specific tasks
+  ansible.builtin.include_tasks: redhat.yaml
+  when: ansible_os_family | lower == "redhat"
+
+- name: create loki group
+  ansible.builtin.group:
+    name: loki
+    state: present
+    system: true
+  become: true
+
+- name: create loki user
+  ansible.builtin.user:
+    name: loki
+    state: present
+    group: loki
+    create_home: false
+    shell: /usr/sbin/nologin
+    system: true
+  become: true
+
+- name: create config directory
+  ansible.builtin.file:
+    path: "{{ loki_config_dir }}"
+    state: directory
+    owner: loki
+    group: loki
+    mode: 0755
+  become: true
+
+- name: create storage directory
+  ansible.builtin.file:
+    path: "{{ loki_storage_dir }}"
+    state: directory
+    owner: loki
+    group: loki
+    mode: 0755
+  become: true
+
+- name: render systemd service file
+  ansible.builtin.template:
+    src: loki.service.j2
+    dest: /etc/systemd/system/loki.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: reload systemd
+
+- name: remove default config file
+  ansible.builtin.file:
+    path: /etc/loki/config.yml
+    state: absent
+  become: true
+
+- name: render config file
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: /etc/loki/config.yaml
+    owner: loki
+    group: loki
+    mode: 0644
+  become: true
+  notify: restart service
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: loki
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers
