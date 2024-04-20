@@ -21,6 +21,10 @@
     "loki": {
       "release-type": "simple",
       "component": "loki"
+    },
+    "admin": {
+      "release-type": "simple",
+      "component": "admin"
     }
   }
 }
