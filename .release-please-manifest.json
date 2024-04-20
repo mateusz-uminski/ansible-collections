@@ -1,5 +1,6 @@
 {
   "docker": "0.1.0",
   "haproxy": "0.1.0",
-  "consul": "0.1.0"
+  "consul": "0.1.0",
+  "grafana": "0.0.1"
 }

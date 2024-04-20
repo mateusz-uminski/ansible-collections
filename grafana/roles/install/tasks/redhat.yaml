@@ -1,0 +1,14 @@
+- name: add grafana yum repository
+  ansible.builtin.yum_repository:
+    name: grafana
+    description: Official Grafana Labs yum repository.
+    baseurl: https://rpm.grafana.com
+    gpgkey: https://rpm.grafana.com/gpg.key
+    gpgcheck: true
+  become: true
+
+- name: install grafana
+  ansible.builtin.dnf:
+    name: grafana
+    state: present
+  become: true
