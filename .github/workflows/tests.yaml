@@ -44,6 +44,7 @@ jobs:
             context: github.com/mateusz-uminski/dockerfiles#amazon2023-systemd-v0.1.0:amazon2023-systemd
         collection:
           - name: docker
+          - name: haproxy
     name: "${{ matrix.collection.name }}: ${{ matrix.platform.name }}(${{ matrix.runner.arch }})"
     uses: mateusz-uminski/github-actions/.github/workflows/molecule-tests.yaml@main
     with:
