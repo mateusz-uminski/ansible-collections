@@ -1,0 +1,25 @@
+# https://ansible.readthedocs.io/projects/lint/configuring/#using-local-configuration-files
+
+profile: production
+offline: true
+use_default_rules: true
+
+enable_list:
+  - only-builtins
+
+loop_var_prefix: "^(__|{role}_)"
+var_naming_pattern: "^[a-z_][a-z0-9_]*$"
+
+warn_list:
+  - experimental
+
+skip_list:
+  - name[casing]
+  - schema[meta]
+  - galaxy[version-incorrect]
+  - var-naming[no-role-prefix]
+
+exclude_paths:
+  - __pycache__/
+  - .github/
+  - venv/

@@ -1,0 +1,23 @@
+name: lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  yamllint:
+    uses: mateusz-uminski/github-actions/.github/workflows/yamllint.yaml@main
+    with:
+      python_version: 3.11
+      yamllint_version: 1.33.0
+
+  ansible-lint:
+    uses: mateusz-uminski/github-actions/.github/workflows/ansible-lint.yaml@main
+
+  python-lint:
+    uses: mateusz-uminski/github-actions/.github/workflows/python-lint.yaml@main
+    with:
+      python_version: 3.11
+      flake8_version: 6.1.0

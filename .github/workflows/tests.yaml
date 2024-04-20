@@ -1,0 +1,76 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  PYTHON_VERSION: 3.11
+  ANSIBLE_VERSION: 8.6.0
+  MOLECULE_VERSION: 6.0.2
+  MOLECULE_PLUGINS_VERSION: 23.5.0
+  PYTEST_VERSION: 7.4.3
+  PYTEST_TESTINFRA_VERSION: 9.0.0
+
+jobs:
+  envs:
+    runs-on: ubuntu-22.04
+    steps:
+      - run: exit 0
+    outputs:
+      PYTHON_VERSION: ${{ env.PYTHON_VERSION }}
+      ANSIBLE_VERSION: ${{ env.ANSIBLE_VERSION }}
+      MOLECULE_VERSION: ${{ env.MOLECULE_VERSION }}
+      MOLECULE_PLUGINS_VERSION: ${{ env.MOLECULE_PLUGINS_VERSION }}
+      PYTEST_VERSION: ${{ env.PYTEST_VERSION }}
+      PYTEST_TESTINFRA_VERSION: ${{ env.PYTEST_TESTINFRA_VERSION }}
+
+  # molecule:
+  #   needs: envs
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       runner:
+  #         - name: ubuntu-22.04
+  #           arch: x86
+  #       platform:
+  #         - name: debian12-systemd
+  #           context: github.com/mateusz-uminski/dockerfiles#debian12-systemd-v0.1.0:debian12-systemd
+  #         - name: alma9-systemd
+  #           context: github.com/mateusz-uminski/dockerfiles#alma9-systemd-v0.1.0:alma9-systemd
+  #         - name: amazon2023-systemd
+  #           context: github.com/mateusz-uminski/dockerfiles#amazon2023-systemd-v0.1.0:amazon2023-systemd
+  #       collection:
+  #         - name: docker
+  #   name: "${{ matrix.collection.name }}: ${{ matrix.platform.name }}(${{ matrix.runner.arch }})"
+  #   uses: mateusz-uminski/github-actions/.github/workflows/molecule-tests.yaml@main
+  #   with:
+  #     runner: ${{ matrix.runner.name }}
+  #     python_version: ${{ matrix.collection.python_version || needs.envs.outputs.PYTHON_VERSION }}
+  #     ansible_version: ${{ matrix.collection.ansible_version || needs.envs.outputs.ANSIBLE_VERSION }}
+  #     molecule_version: ${{ matrix.collection.molecule_version || needs.envs.outputs.MOLECULE_VERSION }}
+  #     molecule_plugins_version: ${{ matrix.collection.molecule_plugins_version || needs.envs.outputs.MOLECULE_PLUGINS_VERSION }}
+  #     pytest_version: ${{ matrix.collection.pytest_version || needs.envs.outputs.PYTEST_VERSION }}
+  #     pytest_testinfra_version: ${{ matrix.collection.pytest_testinfra_version || needs.envs.outputs.PYTEST_TESTINFRA_VERSION }}
+  #     path: "${{ matrix.collection.name }}"
+  #     dockerfile_source: ${{ matrix.platform.context }}
+  #     docker_image_name: ${{ matrix.platform.name }}
+
+  # results:
+  #   runs-on: ubuntu-22.04
+  #   if: ${{ always() && github.event.pull_request }}
+  #   needs: molecule
+  #   steps:
+  #     - run: exit 1
+  #       if: >-
+  #         ${{
+  #           contains(needs.*.result, 'failure')
+  #           || contains(needs.*.result, 'cancelled')
+  #         }}
+
+  results:
+    runs-on: ubuntu-20.04
+    steps:
+      - run: exit 0
