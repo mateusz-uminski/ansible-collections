@@ -1,0 +1,33 @@
+- name: uninstall unofficial packages
+  ansible.builtin.yum:
+    name:
+      - docker
+      - docker-client
+      - docker-client-latest
+      - docker-common
+      - docker-latest
+      - docker-latest-logrotate
+      - docker-logrotate
+      - docker-engine
+    state: absent
+  become: true
+
+- name: add docker yum repository
+  ansible.builtin.yum_repository:
+    name: docker
+    description: Official docker-ce yum repository.
+    baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    gpgcheck: true
+  become: true
+
+- name: install docker packages
+  ansible.builtin.dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: present
+  become: true

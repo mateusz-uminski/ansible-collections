@@ -27,50 +27,45 @@ jobs:
       PYTEST_VERSION: ${{ env.PYTEST_VERSION }}
       PYTEST_TESTINFRA_VERSION: ${{ env.PYTEST_TESTINFRA_VERSION }}
 
-  # molecule:
-  #   needs: envs
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       runner:
-  #         - name: ubuntu-22.04
-  #           arch: x86
-  #       platform:
-  #         - name: debian12-systemd
-  #           context: github.com/mateusz-uminski/dockerfiles#debian12-systemd-v0.1.0:debian12-systemd
-  #         - name: alma9-systemd
-  #           context: github.com/mateusz-uminski/dockerfiles#alma9-systemd-v0.1.0:alma9-systemd
-  #         - name: amazon2023-systemd
-  #           context: github.com/mateusz-uminski/dockerfiles#amazon2023-systemd-v0.1.0:amazon2023-systemd
-  #       collection:
-  #         - name: docker
-  #   name: "${{ matrix.collection.name }}: ${{ matrix.platform.name }}(${{ matrix.runner.arch }})"
-  #   uses: mateusz-uminski/github-actions/.github/workflows/molecule-tests.yaml@main
-  #   with:
-  #     runner: ${{ matrix.runner.name }}
-  #     python_version: ${{ matrix.collection.python_version || needs.envs.outputs.PYTHON_VERSION }}
-  #     ansible_version: ${{ matrix.collection.ansible_version || needs.envs.outputs.ANSIBLE_VERSION }}
-  #     molecule_version: ${{ matrix.collection.molecule_version || needs.envs.outputs.MOLECULE_VERSION }}
-  #     molecule_plugins_version: ${{ matrix.collection.molecule_plugins_version || needs.envs.outputs.MOLECULE_PLUGINS_VERSION }}
-  #     pytest_version: ${{ matrix.collection.pytest_version || needs.envs.outputs.PYTEST_VERSION }}
-  #     pytest_testinfra_version: ${{ matrix.collection.pytest_testinfra_version || needs.envs.outputs.PYTEST_TESTINFRA_VERSION }}
-  #     path: "${{ matrix.collection.name }}"
-  #     dockerfile_source: ${{ matrix.platform.context }}
-  #     docker_image_name: ${{ matrix.platform.name }}
-
-  # results:
-  #   runs-on: ubuntu-22.04
-  #   if: ${{ always() && github.event.pull_request }}
-  #   needs: molecule
-  #   steps:
-  #     - run: exit 1
-  #       if: >-
-  #         ${{
-  #           contains(needs.*.result, 'failure')
-  #           || contains(needs.*.result, 'cancelled')
-  #         }}
+  molecule:
+    needs: envs
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - name: ubuntu-22.04
+            arch: x86
+        platform:
+          - name: debian12-systemd
+            context: github.com/mateusz-uminski/dockerfiles#debian12-systemd-v0.1.0:debian12-systemd
+          - name: alma9-systemd
+            context: github.com/mateusz-uminski/dockerfiles#alma9-systemd-v0.1.0:alma9-systemd
+          - name: amazon2023-systemd
+            context: github.com/mateusz-uminski/dockerfiles#amazon2023-systemd-v0.1.0:amazon2023-systemd
+        collection:
+          - name: docker
+    name: "${{ matrix.collection.name }}: ${{ matrix.platform.name }}(${{ matrix.runner.arch }})"
+    uses: mateusz-uminski/github-actions/.github/workflows/molecule-tests.yaml@main
+    with:
+      runner: ${{ matrix.runner.name }}
+      python_version: ${{ matrix.collection.python_version || needs.envs.outputs.PYTHON_VERSION }}
+      ansible_version: ${{ matrix.collection.ansible_version || needs.envs.outputs.ANSIBLE_VERSION }}
+      molecule_version: ${{ matrix.collection.molecule_version || needs.envs.outputs.MOLECULE_VERSION }}
+      molecule_plugins_version: ${{ matrix.collection.molecule_plugins_version || needs.envs.outputs.MOLECULE_PLUGINS_VERSION }}
+      pytest_version: ${{ matrix.collection.pytest_version || needs.envs.outputs.PYTEST_VERSION }}
+      pytest_testinfra_version: ${{ matrix.collection.pytest_testinfra_version || needs.envs.outputs.PYTEST_TESTINFRA_VERSION }}
+      path: "${{ matrix.collection.name }}"
+      dockerfile_source: ${{ matrix.platform.context }}
+      docker_image_name: ${{ matrix.platform.name }}
 
   results:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    if: ${{ always() && github.event.pull_request }}
+    needs: molecule
     steps:
-      - run: exit 0
+      - run: exit 1
+        if: >-
+          ${{
+            contains(needs.*.result, 'failure')
+            || contains(needs.*.result, 'cancelled')
+          }}
