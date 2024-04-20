@@ -1,0 +1,48 @@
+auth_enabled: {{ loki_enable_auth | lower }}
+
+server:
+  http_listen_address: 0.0.0.0
+  http_listen_port: 3100
+
+  grpc_listen_address: 0.0.0.0
+  grpc_listen_port: 9096
+
+  log_level: "{{ loki_log_level }}"
+
+common:
+  ring:
+    kvstore:
+      store: "{{ loki_storage_conf[loki_storage].ring_kv_store }}"
+  replication_factor: 1
+  path_prefix: "{{ loki_storage_dir }}"
+
+storage_config:
+  tsdb_shipper:
+    active_index_directory: "{{ loki_storage_dir }}/index"
+    cache_location: "{{ loki_storage_dir }}/index_cache"
+    cache_ttl: 24h
+{% if loki_storage == "s3" %}
+  aws:
+    s3: "{{ loki_storage_conf[loki_storage].endpoint }}"
+    s3forcepathstyle: true
+    bucketnames: "{{ loki_storage_conf[loki_storage].bucketnames }}"
+    region: "{{ loki_storage_conf[loki_storage].region }}"
+    insecure: {{ loki_storage_conf[loki_storage].insecure | lower }}
+    sse_encryption: {{ loki_storage_conf[loki_storage].sse_encryption | lower }}
+{% elif loki_storage == "filesystem" %}
+  filesystem:
+    directory: "{{ loki_storage_dir }}"
+{% endif %}
+
+schema_config:
+  configs:
+    - from: 2020-07-01
+      store: tsdb
+      object_store: "{{ loki_storage_conf[loki_storage].tsdb_object_store }}"
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+analytics:
+ reporting_enabled: false

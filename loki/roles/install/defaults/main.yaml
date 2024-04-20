@@ -1,0 +1,20 @@
+loki_config_dir: /etc/loki
+loki_storage_dir: /var/lib/loki
+
+loki_enable_auth: false
+loki_log_level: info
+
+loki_storage: filesystem  # should match a key from the loki_storage_conf dict
+
+loki_storage_conf:
+  filesystem:
+    ring_kv_store: inmemory
+    tsdb_object_store: filesystem
+  s3:
+    ring_kv_store: inmemory  # memberlist
+    endpoint: https://s3.console.aws.amazon.com/
+    bucketnames: bucketname  # <org>-<account alias>-loki-logs-<region code>-<environment>
+    region: us-east-1
+    insecure: false
+    sse_encryption: false
+    tsdb_object_store: aws

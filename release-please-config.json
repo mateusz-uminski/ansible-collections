@@ -17,6 +17,10 @@
     "grafana": {
       "release-type": "simple",
       "component": "grafana"
+    },
+    "loki": {
+      "release-type": "simple",
+      "component": "loki"
     }
   }
 }
