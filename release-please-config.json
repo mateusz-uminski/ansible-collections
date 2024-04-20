@@ -9,6 +9,10 @@
     "haproxy": {
       "release-type": "simple",
       "component": "haproxy"
+    },
+    "consul": {
+      "release-type": "simple",
+      "component": "consul"
     }
   }
 }
