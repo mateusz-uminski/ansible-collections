@@ -49,6 +49,7 @@ jobs:
           - name: grafana
           - name: loki
           - name: admin
+          - name: experimental
     name: "${{ matrix.collection.name }}: ${{ matrix.platform.name }}(${{ matrix.runner.arch }})"
     uses: mateusz-uminski/github-actions/.github/workflows/molecule-tests.yaml@main
     with:
@@ -63,10 +64,29 @@ jobs:
       dockerfile_source: ${{ matrix.platform.context }}
       docker_image_name: ${{ matrix.platform.name }}
 
+  pytest:
+    needs: envs
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - name: ubuntu-22.04
+            arch: x86
+        collection:
+          - name: experimental
+    name: "${{ matrix.collection.name }}: plugins(${{ matrix.runner.arch }})"
+    uses: mateusz-uminski/github-actions/.github/workflows/python-tests.yaml@main
+    with:
+      python_version: ${{ matrix.collection.python_version || needs.envs.outputs.PYTHON_VERSION }}
+      requirements_file: "requirements.txt"
+      tests_dir: "${{ matrix.collection.name }}/plugins/"
+
   results:
     runs-on: ubuntu-22.04
     if: ${{ always() && github.event.pull_request }}
-    needs: molecule
+    needs:
+      - molecule
+      - pytest
     steps:
       - run: exit 1
         if: >-
