@@ -5,5 +5,5 @@
   "grafana": "0.1.0",
   "loki": "0.1.0",
   "admin": "0.1.0",
-  "experimental": "0.0.1"
+  "experimental": "0.1.0"
 }
