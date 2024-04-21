@@ -25,6 +25,10 @@
     "admin": {
       "release-type": "simple",
       "component": "admin"
+    },
+    "experimental": {
+      "release-type": "simple",
+      "component": "experimental"
     }
   }
 }

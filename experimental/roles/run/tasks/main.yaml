@@ -1,0 +1,6 @@
+- name: run custom module
+  write_log:  # noqa: syntax-check[unknown-module]
+    name: "{{ experimental_name }}"
+    message: "{{ experimental_message }}"
+    dir: /tmp
+    state: present

@@ -23,3 +23,4 @@ exclude_paths:
   - __pycache__/
   - .github/
   - venv/
+  - experimental/roles/run/tasks/main.yaml  # syntax-check[unknown-module] is unskippable
