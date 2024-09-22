@@ -1,0 +1,12 @@
+[Unit]
+Description=Node exporter
+After=network.target
+
+[Service]
+User=nodeexporter
+Group=nodeexporter
+Type=simple
+ExecStart=/usr/local/bin/node-exporter --web.listen-address={{ node_exporter_ip_addr }}:{{ node_exporter_port }}
+
+[Install]
+WantedBy=multi-user.target

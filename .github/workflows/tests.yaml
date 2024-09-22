@@ -54,6 +54,7 @@ jobs:
           - name: admin
           - name: experimental
           - name: tempo
+          - name: node_exporter
     name: "${{ matrix.collection.name }}: ${{ matrix.platform.name }}(${{ matrix.runner.arch }})"
     uses: mateusz-uminski/github-actions/.github/workflows/molecule-tests.yaml@main
     with:
