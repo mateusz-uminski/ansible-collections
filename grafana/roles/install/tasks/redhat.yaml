@@ -1,3 +1,9 @@
+- name: install missing chkconfig to allow invoking systemd-sysv-install
+  ansible.builtin.dnf:
+    name: chkconfig
+    state: present
+  become: true
+
 - name: add grafana yum repository
   ansible.builtin.yum_repository:
     name: grafana
