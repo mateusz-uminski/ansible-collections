@@ -1,5 +1,5 @@
 - name: uninstall unofficial packages
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name:
       - docker
       - docker-client
