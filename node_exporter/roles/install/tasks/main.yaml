@@ -1,0 +1,64 @@
+- name: include amazonlinux specific tasks
+  ansible.builtin.include_tasks: amazonlinux.yaml
+  when: ansible_os_family | lower == "redhat" and ansible_distribution | lower == "amazon"
+
+- name: create nodeexporter group
+  ansible.builtin.group:
+    name: nodeexporter
+    state: present
+    system: true
+  become: true
+
+- name: create nodeexporter user
+  ansible.builtin.user:
+    name: nodeexporter
+    state: present
+    group: nodeexporter
+    create_home: false
+    shell: /usr/sbin/nologin
+    system: true
+  become: true
+
+- name: get node exporter binary
+  block:
+    - name: set architecture
+      ansible.builtin.set_fact:
+        _arch: "{{ (ansible_architecture == 'aarch64') | ternary('arm64', 'amd64') }}"
+
+    - name: download node exporter from github
+      ansible.builtin.unarchive:
+        src: "https://github.com/prometheus/node_exporter/releases/download\
+              /v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-{{ _arch }}.tar.gz"
+        dest: /tmp
+        remote_src: true
+
+    - name: copy node exporter binary to /usr/local/bin
+      ansible.builtin.copy:
+        src: /tmp/node_exporter-{{ node_exporter_version }}.linux-{{ _arch }}/node_exporter
+        dest: /usr/local/bin/node-exporter
+        owner: nodeexporter
+        group: nodeexporter
+        mode: 0750
+        remote_src: true
+      become: true
+      notify: restart service
+
+- name: render systemd service file
+  ansible.builtin.template:
+    src: node-exporter.service.j2
+    dest: /etc/systemd/system/node-exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: reload systemd
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: node-exporter
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers

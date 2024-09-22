@@ -33,6 +33,10 @@
     "tempo": {
       "release-type": "simple",
       "component": "tempo"
+    },
+    "node_exporter": {
+      "release-type": "simple",
+      "component": "node_exporter"
     }
   }
 }
