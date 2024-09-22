@@ -3,7 +3,7 @@
   "haproxy": "0.1.0",
   "consul": "0.1.0",
   "grafana": "0.1.1",
-  "loki": "0.1.0",
+  "loki": "0.1.1",
   "admin": "0.1.0",
   "experimental": "0.1.1"
 }
