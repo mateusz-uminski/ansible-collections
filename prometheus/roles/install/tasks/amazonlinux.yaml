@@ -1,0 +1,7 @@
+- name: install missing unzip package
+  ansible.builtin.dnf:
+    name:
+      - unzip
+      - tar
+    state: present
+  become: true
