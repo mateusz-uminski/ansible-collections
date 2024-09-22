@@ -1,0 +1,4 @@
+postgres_version: 15
+
+postgres_pg_hba_entries:
+  - host all all 0.0.0.0/0 md5

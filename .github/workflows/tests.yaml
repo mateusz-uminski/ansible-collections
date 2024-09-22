@@ -60,9 +60,18 @@ jobs:
           - name: vault
           - name: java
           - name: nexus
+          - name: postgres
         exclude:
           - collection:
               name: redis
+            platform:
+              name: amazon2023-systemd
+          - collection:
+              name: postgres
+            platform:
+              name: alma9-systemd
+          - collection:
+              name: postgres
             platform:
               name: amazon2023-systemd
     name: "${{ matrix.collection.name }}: ${{ matrix.platform.name }}(${{ matrix.runner.arch }})"

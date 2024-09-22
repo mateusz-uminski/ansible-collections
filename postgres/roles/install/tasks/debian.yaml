@@ -1,0 +1,5 @@
+- name: install postgres
+  ansible.builtin.apt:
+    name: "postgresql-{{ postgres_version }}"
+    state: present
+  become: true

@@ -57,6 +57,10 @@
     "nexus": {
       "release-type": "simple",
       "component": "nexus"
+    },
+    "postgres": {
+      "release-type": "simple",
+      "component": "postgres"
     }
   }
 }

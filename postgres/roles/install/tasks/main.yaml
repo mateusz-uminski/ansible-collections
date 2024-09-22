@@ -1,0 +1,48 @@
+- name: include debian specific tasks
+  ansible.builtin.include_tasks: debian.yaml
+  when: ansible_os_family | lower == "debian"
+
+- name: create postgres group
+  ansible.builtin.group:
+    name: postgres
+    state: present
+    system: true
+  become: true
+
+- name: create postgres user
+  ansible.builtin.user:
+    name: postgres
+    state: present
+    group: postgres
+    create_home: false
+    shell: /usr/sbin/nologin
+    system: true
+  become: true
+
+- name: render pg_hba config
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
+    owner: postgres
+    group: postgres
+    mode: 0644
+  become: true
+  notify: restart service
+
+- name: listen on 0.0.0.0/0
+  ansible.builtin.lineinfile:
+    dest: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
+    state: present
+    regexp: "^#listen_addresses'"
+    line: "listen_addresses = '*'"
+  notify: restart service
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers
