@@ -41,6 +41,10 @@
     "prometheus": {
       "release-type": "simple",
       "component": "prometheus"
+    },
+    "redis": {
+      "release-type": "simple",
+      "component": "redis"
     }
   }
 }

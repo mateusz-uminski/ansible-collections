@@ -1,0 +1,71 @@
+- name: include os specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family | lower }}.yaml"
+
+- name: include debian specific tasks
+  ansible.builtin.include_tasks: debian.yaml
+  when: ansible_os_family | lower == "debian"
+
+- name: include redhat specific tasks
+  ansible.builtin.include_tasks: redhat.yaml
+  when: ansible_os_family | lower == "redhat"
+
+- name: create redis group
+  ansible.builtin.group:
+    name: redis
+    state: present
+    system: true
+  become: true
+
+- name: create redis user
+  ansible.builtin.user:
+    name: redis
+    state: present
+    group: redis
+    create_home: false
+    shell: /bin/nologin
+    system: true
+  become: true
+
+- name: create config directory
+  ansible.builtin.file:
+    path: "{{ redis_conf_dir }}"
+    state: directory
+    owner: redis
+    group: redis
+    mode: 0755
+  become: true
+
+- name: create log directory
+  ansible.builtin.file:
+    path: "{{ redis_log_dir }}"
+    state: directory
+    owner: redis
+    group: redis
+    mode: 0750
+  become: true
+
+- name: create storage directory
+  ansible.builtin.file:
+    path: "{{ redis_db_dir }}"
+    state: directory
+    owner: redis
+    group: redis
+    mode: 0750
+  become: true
+
+- name: render redis.conf file
+  ansible.builtin.template:
+    src: redis.conf.j2
+    dest: /etc/redis/redis.conf
+    owner: redis
+    group: redis
+    mode: "0644"
+  become: true
+  notify: restart service
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: "{{ redis_service_name }}"
+    state: started
+    enabled: true
+  become: true
