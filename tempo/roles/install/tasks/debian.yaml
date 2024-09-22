@@ -1,0 +1,17 @@
+- name: add grafana labs repostiory gpg key
+  ansible.builtin.apt_key:
+    url: https://apt.grafana.com/gpg.key
+    state: present
+  become: true
+
+- name: add grafana labs apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://apt.grafana.com stable main"
+    state: present
+  become: true
+
+- name: install tempo
+  ansible.builtin.apt:
+    name: tempo
+    state: present
+  become: true

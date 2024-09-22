@@ -1,0 +1,10 @@
+tempo_config_dir: /etc/tempo
+tempo_storage_backend: local
+tempo_storage_dir: /tmp/tempo
+# tempo_s3_storage_bucket_name: ""
+
+tempo_log_level: info
+
+tempo_metrics_remote_write: http://prometheus:9090/api/v1/write
+tempo_metrics_labels:
+  source: tempo

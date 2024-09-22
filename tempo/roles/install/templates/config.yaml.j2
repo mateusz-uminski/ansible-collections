@@ -1,0 +1,51 @@
+# source: https://github.com/grafana/intro-to-mltp/blob/49145dbae37d1af7e892a59b1ecf8abf1425a264/tempo/tempo.yaml
+
+stream_over_http_enabled: true
+
+server:
+  http_listen_port: 3200
+  log_level: "{{ tempo_log_level }}"
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        http:
+        grpc:
+
+ingester:
+  max_block_duration: 5m
+
+compactor:
+  compaction:
+    block_retention: 1h
+
+metrics_generator:
+  registry:
+    collection_interval: 5s
+    external_labels:
+{% for k, v in tempo_metrics_labels.items() %}
+      {{ k }}: {{ v }}
+{% endfor %}
+  storage:
+    path: {{ tempo_storage_dir }}/generator/wal
+    remote_write:
+      - url: {{ tempo_metrics_remote_write }}
+        send_exemplars: true
+  traces_storage:
+    path: {{ tempo_storage_dir }}/generator/traces
+
+storage:
+  trace:
+    backend: {{ tempo_storage_backend }}
+    wal:
+      path: {{ tempo_storage_dir }}/wal
+    local:
+      path: {{ tempo_storage_dir }}/blocks
+    {% if tempo_storage_backend == "s3" %}
+    s3:
+      bucket: {{ tempo_s3_storage_bucket_name }}
+    {% endif %}
+
+overrides:
+  metrics_generator_processors: ['service-graphs', 'span-metrics','local-blocks']

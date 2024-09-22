@@ -29,6 +29,10 @@
     "experimental": {
       "release-type": "simple",
       "component": "experimental"
+    },
+    "tempo": {
+      "release-type": "simple",
+      "component": "tempo"
     }
   }
 }
