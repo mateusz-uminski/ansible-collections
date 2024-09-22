@@ -1,0 +1,16 @@
+prometheus_version: 2.54.0
+prometheus_conf_dir: /etc/prometheus
+prometheus_db_dir: /var/lib/prometheus
+prometheus_data_retention: 30d
+
+prometheus_external_labels:
+  environment: sandbox
+
+prometheus_global:
+  scrape_interval: 1m
+  scrape_timeout: 30s
+  evaluation_interval: 1m
+
+prometheus_remote_write: []
+prometheus_remote_read: []
+prometheus_scrape_configs: []

@@ -1,0 +1,92 @@
+- name: include amazonlinux specific tasks
+  ansible.builtin.include_tasks: amazonlinux.yaml
+  when: ansible_os_family | lower == "redhat" and ansible_distribution | lower == "amazon"
+
+- name: create prometheus group
+  ansible.builtin.group:
+    name: prometheus
+    state: present
+    system: true
+  become: true
+
+- name: create prometheus user
+  ansible.builtin.user:
+    name: prometheus
+    state: present
+    group: prometheus
+    create_home: false
+    shell: /usr/sbin/nologin
+    system: true
+  become: true
+
+- name: get prometheus binary
+  block:
+    - name: set architecture
+      ansible.builtin.set_fact:
+        _arch: "{{ (ansible_architecture == 'aarch64') | ternary('arm64', 'amd64') }}"
+
+    - name: download prometheus from github
+      ansible.builtin.unarchive:
+        src: "https://github.com/prometheus/prometheus/releases/download/\
+              /v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-{{ _arch }}.tar.gz"
+        dest: /tmp
+        remote_src: true
+
+    - name: copy prometheus binary to /usr/local/bin
+      ansible.builtin.copy:
+        src: /tmp/prometheus-{{ prometheus_version }}.linux-{{ _arch }}/prometheus
+        dest: /usr/local/bin/prometheus
+        owner: prometheus
+        group: prometheus
+        mode: 0750
+        remote_src: true
+      become: true
+      notify: restart service
+
+- name: create config directory
+  ansible.builtin.file:
+    path: "{{ prometheus_conf_dir }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: 0755
+  become: true
+
+- name: create storage directory
+  ansible.builtin.file:
+    path: "{{ prometheus_db_dir }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+    mode: 0755
+  become: true
+
+- name: render systemd service file
+  ansible.builtin.template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: reload systemd
+
+- name: render config file
+  ansible.builtin.template:
+    src: prometheus.yaml.j2
+    dest: /etc/prometheus/prometheus.yaml
+    owner: prometheus
+    group: prometheus
+    mode: 0644
+  become: true
+  notify: restart service
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: prometheus
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers

@@ -37,6 +37,10 @@
     "node_exporter": {
       "release-type": "simple",
       "component": "node_exporter"
+    },
+    "prometheus": {
+      "release-type": "simple",
+      "component": "prometheus"
     }
   }
 }
