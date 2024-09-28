@@ -59,6 +59,7 @@ jobs:
           - name: redis
           - name: vault
           - name: java
+          - name: nexus
         exclude:
           - collection:
               name: redis
