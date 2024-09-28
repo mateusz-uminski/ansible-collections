@@ -1,0 +1,14 @@
+- name: add jenkins yum repository
+  ansible.builtin.yum_repository:
+    name: jenkins
+    description: Official Jenkins yum repository.
+    baseurl: https://pkg.jenkins.io/redhat-stable
+    gpgkey: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+    gpgcheck: true
+  become: true
+
+- name: install jenkins
+  ansible.builtin.dnf:
+    name: "jenkins-{{ jenkins_version }}"
+    state: present
+  become: true

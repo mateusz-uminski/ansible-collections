@@ -61,6 +61,10 @@
     "postgres": {
       "release-type": "simple",
       "component": "postgres"
+    },
+    "jenkins": {
+      "release-type": "simple",
+      "component": "jenkins"
     }
   }
 }
