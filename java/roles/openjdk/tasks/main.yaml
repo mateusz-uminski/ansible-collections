@@ -1,0 +1,39 @@
+- name: include debian specific tasks
+  ansible.builtin.include_tasks: debian.yaml
+  when: ansible_os_family | lower == "debian"
+
+- name: include redhat specific tasks
+  ansible.builtin.include_tasks: redhat.yaml
+  when: ansible_os_family | lower == "redhat" and ansible_distribution | lower != "amazon"
+
+- name: include amazonlinux specific tasks
+  ansible.builtin.include_tasks: amazonlinux.yaml
+  when: ansible_os_family | lower == "redhat" and ansible_distribution | lower == "amazon"
+
+- name: ensure /etc/profile.d exists
+  ansible.builtin.file:
+    path: /etc/profile.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+
+- name: get stats of /etc/alternatives/java
+  ansible.builtin.stat:
+    path: /etc/alternatives/java
+  register: java_alternatives
+
+- name: set JAVA_HOME
+  ansible.builtin.lineinfile:
+    dest: /etc/profile.d/java.sh
+    create: true
+    owner: root
+    group: root
+    mode: 0644
+    state: present
+    regexp: "^export JAVA_HOME'"
+    line: "export JAVA_HOME={{ java_alternatives.stat.lnk_source | dirname | dirname }}"
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers

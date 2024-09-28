@@ -1,0 +1,5 @@
+- name: install java
+  ansible.builtin.apt:
+    name: "openjdk-{{ java_openjdk_version }}-jdk"
+    state: present
+  become: true
