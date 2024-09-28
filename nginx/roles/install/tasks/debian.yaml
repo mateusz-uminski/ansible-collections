@@ -1,0 +1,17 @@
+- name: add nginx repostiory gpg key
+  ansible.builtin.apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
+  become: true
+
+- name: add nginx repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://nginx.org/packages/debian/ {{ ansible_distribution_release }} nginx"
+    state: present
+  become: true
+
+- name: install nginx package
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+  become: true
