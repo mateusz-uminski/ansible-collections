@@ -10,5 +10,5 @@
   "node_exporter": "0.1.0",
   "prometheus": "0.1.0",
   "redis": "0.1.0",
-  "vault": "0.0.1"
+  "vault": "0.1.0"
 }
