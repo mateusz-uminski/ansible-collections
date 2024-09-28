@@ -1,0 +1,12 @@
+namespace: infra
+name: vault
+description: ""
+
+repository: ""
+readme: README.md
+authors: []
+
+version: "0.0.0"
+
+tags:
+  - infrastructure

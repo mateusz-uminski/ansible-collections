@@ -1,0 +1,52 @@
+ui = true
+
+api_addr = "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:8200"
+cluster_addr = "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:8201"
+
+
+{% if ansible_play_hosts | length > 1 %}
+
+disable_mlock = true
+storage "raft" {
+  path    = "/opt/vault/data"
+  node_id = "{{ ansible_hostname }}"
+{% for server in ansible_play_hosts %}
+{% if server != inventory_hostname %}
+  retry_join {
+    auto_join_scheme = "http"
+
+    leader_api_addr = "http://{{ hostvars[server]['ansible_default_ipv4']['address'] }}:8200"
+  }
+{% endif %}
+{% endfor %}
+}
+
+{% else %}
+
+disable_mlock = false
+storage "file" {
+  path = "/opt/vault/data"
+}
+
+{% endif %}
+
+
+# HTTP listener
+listener "tcp" {
+  address         = "0.0.0.0:8200"
+  cluster_address = "0.0.0.0:8201"
+
+  tls_disable = 1
+
+  # tls_cert_file = "/opt/vault/tls/tls.crt"
+  # tls_key_file  = "/opt/vault/tls/tls.key"
+}
+
+# HTTPS listener
+# listener "tcp" {
+#   address         = "0.0.0.0:8200"
+#   cluster_address = "0.0.0.0:8201"
+#
+#   tls_cert_file = "/opt/vault/tls/tls.crt"
+#   tls_key_file  = "/opt/vault/tls/tls.key"
+# }

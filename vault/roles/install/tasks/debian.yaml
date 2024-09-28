@@ -1,0 +1,17 @@
+- name: add hashicorp repostiory gpg key
+  ansible.builtin.apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+  become: true
+
+- name: add hashicorp apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    state: present
+  become: true
+
+- name: install vault
+  ansible.builtin.apt:
+    name: "vault={{ vault_version }}"
+    state: present
+  become: true

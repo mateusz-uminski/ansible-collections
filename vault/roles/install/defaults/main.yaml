@@ -1,0 +1,7 @@
+vault_version: 1.17.6-1
+vault_cluster_name: cluster
+vault_secret_shares: 5
+vault_secret_threshold: 3
+
+# vault_root_token: ""
+# vault_unseal_keys: []

@@ -57,6 +57,7 @@ jobs:
           - name: node_exporter
           - name: prometheus
           - name: redis
+          - name: vault
         exclude:
           - collection:
               name: redis

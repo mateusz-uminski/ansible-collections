@@ -45,6 +45,10 @@
     "redis": {
       "release-type": "simple",
       "component": "redis"
+    },
+    "vault": {
+      "release-type": "simple",
+      "component": "vault"
     }
   }
 }
