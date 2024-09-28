@@ -9,5 +9,5 @@
   "tempo": "0.1.0",
   "node_exporter": "0.1.0",
   "prometheus": "0.1.0",
-  "redis": "0.0.1"
+  "redis": "0.1.0"
 }
