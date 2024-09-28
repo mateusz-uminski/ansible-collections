@@ -56,6 +56,12 @@ jobs:
           - name: tempo
           - name: node_exporter
           - name: prometheus
+          - name: redis
+        exclude:
+          - collection:
+              name: redis
+            platform:
+              name: amazon2023-systemd
     name: "${{ matrix.collection.name }}: ${{ matrix.platform.name }}(${{ matrix.runner.arch }})"
     uses: mateusz-uminski/github-actions/.github/workflows/molecule-tests.yaml@main
     with:

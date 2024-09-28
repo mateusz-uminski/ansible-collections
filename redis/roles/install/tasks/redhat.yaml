@@ -1,0 +1,14 @@
+- name: add yum repository
+  ansible.builtin.yum_repository:
+    name: redis
+    description: "Official redis yum repository."
+    baseurl: http://packages.redis.io/rpm/rhel9
+    gpgkey: https://packages.redis.io/gpg
+    gpgcheck: true
+  become: true
+
+- name: install redis server
+  ansible.builtin.dnf:
+    name: redis
+    state: present
+  become: true
