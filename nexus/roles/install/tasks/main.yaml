@@ -1,0 +1,87 @@
+- name: include amazonlinux specific tasks
+  ansible.builtin.include_tasks: amazonlinux.yaml
+  when: ansible_os_family | lower == "redhat" and ansible_distribution | lower == "amazon"
+
+- name: create nexus group
+  ansible.builtin.group:
+    name: nexus
+    state: present
+    system: true
+  become: true
+
+- name: create nexus user
+  ansible.builtin.user:
+    name: nexus
+    state: present
+    group: nexus
+    create_home: false
+    shell: /usr/sbin/nologin
+    system: true
+  become: true
+
+- name: get nexus binary
+  block:
+    - name: download nexus from github
+      ansible.builtin.unarchive:
+        src: "https://download.sonatype.com/nexus/3/nexus-{{ nexus_version }}-unix.tar.gz"
+        dest: /opt/
+        creates: "/opt/nexus-{{ nexus_version }}"
+        remote_src: true
+
+    - name: change ownership of /opt/nexus directory
+      ansible.builtin.file:
+        path: "/opt/nexus-{{ nexus_version }}"
+        state: directory
+        owner: nexus
+        group: nexus
+        recurse: true
+      become: true
+
+    - name: change ownership of /opt/sonatype-work directory
+      ansible.builtin.file:
+        path: "/opt/sonatype-work"
+        state: directory
+        owner: nexus
+        group: nexus
+        recurse: true
+      become: true
+
+- name: render systemd service file
+  ansible.builtin.template:
+    src: nexus.service.j2
+    dest: /etc/systemd/system/nexus.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: reload systemd
+
+- name: render vmoptions file
+  ansible.builtin.template:
+    src: nexus.vmoptions.j2
+    dest: /opt/nexus-{{ nexus_version }}/bin/nexus.vmoptions
+    owner: nexus
+    group: nexus
+    mode: 0644
+  become: true
+  notify: restart service
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: nexus
+    state: started
+    enabled: true
+  become: true
+
+- name: wait until nexus is accessible
+  ansible.builtin.uri:
+    url: http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:8081
+    return_content: false
+    status_code: 200
+  register: nexus_status
+  retries: 120
+  delay: 5
+  until: nexus_status.status == 200
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers
