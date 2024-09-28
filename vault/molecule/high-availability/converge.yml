@@ -1,0 +1,26 @@
+- name: converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/install  # noqa: role-name[path]
+
+    - name: show vault_root_token
+      ansible.builtin.debug:
+        var: vault_root_token
+      delegate_to: "{{ ansible_play_hosts[0] }}"
+      run_once: true
+
+    - name: show vault_unseal_keys
+      ansible.builtin.debug:
+        var: vault_unseal_keys
+      delegate_to: "{{ ansible_play_hosts[0] }}"
+      run_once: true
+
+    - name: show auth command
+      ansible.builtin.debug:
+        msg: "export VAULT_ADDR={{ vault_addr }} && export VAULT_TOKEN={{ vault_root_token }}"
+      delegate_to: "{{ ansible_play_hosts[0] }}"
+      run_once: true
+      when: vault_root_token is defined and vault_unseal_keys is defined

@@ -1,0 +1,14 @@
+- name: add hashicorp yum repository
+  ansible.builtin.yum_repository:
+    name: hashicorp
+    description: Official Hashicorp yum repository.
+    baseurl: https://rpm.releases.hashicorp.com/AmazonLinux/latest/$basearch/stable
+    gpgkey: https://rpm.releases.hashicorp.com/gpg
+    gpgcheck: true
+  become: true
+
+- name: install vault
+  ansible.builtin.dnf:
+    name: "vault-{{ vault_version }}"
+    state: present
+  become: true
