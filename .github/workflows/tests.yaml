@@ -58,6 +58,7 @@ jobs:
           - name: prometheus
           - name: redis
           - name: vault
+          - name: java
         exclude:
           - collection:
               name: redis

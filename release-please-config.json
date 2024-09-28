@@ -49,6 +49,10 @@
     "vault": {
       "release-type": "simple",
       "component": "vault"
+    },
+    "java": {
+      "release-type": "simple",
+      "component": "java"
     }
   }
 }

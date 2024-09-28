@@ -1,0 +1,5 @@
+- name: install java
+  ansible.builtin.dnf:
+    name: "java-{{ java_openjdk_version }}-amazon-corretto"
+    state: present
+  become: true

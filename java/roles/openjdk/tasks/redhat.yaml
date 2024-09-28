@@ -1,0 +1,7 @@
+- name: install java
+  ansible.builtin.dnf:
+    name:
+      - "java-{{ java_openjdk_version }}-openjdk"
+      - "java-{{ java_openjdk_version }}-openjdk-devel"
+    state: present
+  become: true

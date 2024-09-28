@@ -1,0 +1,7 @@
+- name: converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/openjdk  # noqa: role-name[path]
