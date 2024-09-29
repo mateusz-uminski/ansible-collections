@@ -1,0 +1,13 @@
+nginx_vhost_servers:
+  - id: example_server
+    listen: 80
+    server_name: default
+    access_log_level: main
+    error_log_level: error
+    locations:
+      - path: /
+        type: application/json
+        return: 200 '{"status":"success","message":"hello world"}'
+      - path: /ping
+        type: application/json
+        return: 200 '{"status":"success","message":"pong"}'

@@ -1,0 +1,18 @@
+{% for server in nginx_vhost_servers %}
+server {
+    listen {{ server.listen }};
+    server_name {{ server.server_name }};
+
+    access_log /var/log/nginx/{{ server.id }}_access.log {{ server.access_log_level }};
+    error_log /var/log/nginx/{{ server.id }}_error.log {{ server.error_log_level }};
+
+
+    {% for location in server.locations %}
+    location {{ location.path }} {
+        default_type {{ location.type }};
+        return {{ location.return }};
+    }
+    {% endfor %}
+
+}
+{% endfor %}

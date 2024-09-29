@@ -1,0 +1,17 @@
+- name: install ssh package
+  ansible.builtin.dnf:
+    name: openssh-server
+    state: present
+  become: true
+
+- name: generate ssh host keys
+  community.crypto.openssh_keypair:
+    path: /etc/ssh/ssh_host_{{ item }}_key
+    type: "{{ item }}"
+    owner: root
+    group: root
+  become: true
+  loop:
+    - rsa
+    - ecdsa
+    - ed25519

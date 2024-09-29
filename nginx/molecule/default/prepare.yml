@@ -1,0 +1,15 @@
+- name: prepare
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: wait for systemd to complete initialization
+      ansible.builtin.command: systemctl is-system-running  # noqa: command-instead-of-module
+      register: systemctl_status
+      until: >
+        'running' in systemctl_status.stdout or
+        'degraded' in systemctl_status.stdout
+      retries: 10
+      delay: 3
+      when: ansible_service_mgr == 'systemd'
+      changed_when: false
+      failed_when: systemctl_status.rc > 1
