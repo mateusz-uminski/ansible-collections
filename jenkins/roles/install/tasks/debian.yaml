@@ -1,0 +1,17 @@
+- name: add jenkins repostiory gpg key
+  ansible.builtin.apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    state: present
+  become: true
+
+- name: add jenkins apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://pkg.jenkins.io/debian-stable binary/"
+    state: present
+  become: true
+
+- name: install jenkins
+  ansible.builtin.apt:
+    name: "jenkins={{ jenkins_version }}"
+    state: present
+  become: true

@@ -13,5 +13,6 @@
   "vault": "0.1.0",
   "java": "0.1.0",
   "nexus": "0.1.0",
-  "postgres": "0.1.0"
+  "postgres": "0.1.0",
+  "jenkins": "0.0.1"
 }

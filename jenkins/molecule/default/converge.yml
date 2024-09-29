@@ -1,0 +1,28 @@
+- name: converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: install java on debian
+      ansible.builtin.apt:
+        name: openjdk-17-jdk
+        state: present
+      become: true
+      when: ansible_os_family | lower == "debian"
+
+    - name: install java on redhat
+      ansible.builtin.dnf:
+        name: java-17-openjdk
+        state: present
+      become: true
+      when: ansible_os_family | lower == "redhat" and ansible_distribution | lower != "amazon"
+
+    - name: install java on amazonlinux
+      ansible.builtin.dnf:
+        name: java-17-amazon-corretto
+        state: present
+      become: true
+      when: ansible_os_family | lower == "redhat" and ansible_distribution | lower == "amazon"
+
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/install  # noqa: role-name[path]
