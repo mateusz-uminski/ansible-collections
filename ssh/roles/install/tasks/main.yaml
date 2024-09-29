@@ -1,0 +1,28 @@
+- name: include debian specific tasks
+  ansible.builtin.include_tasks: debian.yaml
+  when: ansible_os_family | lower == "debian"
+
+- name: include redhat specific tasks
+  ansible.builtin.include_tasks: redhat.yaml
+  when: ansible_os_family | lower == "redhat"
+
+- name: render sshd_config file
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0644
+    validate: /usr/sbin/sshd -t -f %s
+  become: true
+  notify: restart service
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: sshd
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers
