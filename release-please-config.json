@@ -69,6 +69,10 @@
     "nginx": {
       "release-type": "simple",
       "component": "nginx"
+    },
+    "ssh": {
+      "release-type": "simple",
+      "component": "ssh"
     }
   }
 }

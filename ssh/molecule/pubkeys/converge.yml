@@ -1,0 +1,17 @@
+- name: converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/install  # noqa: role-name[path]
+
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/pubkeys  # noqa: role-name[path]
+      vars:
+        ssh_authorized_keys:
+          - remote_user: root
+            allowed_pubkeys: |
+              ssh-rsa notsolongpubkeyvalue1== user1@example.com
+              ssh-rsa notsolongpubkeyvalue2== user2@example.com
