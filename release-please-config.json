@@ -65,6 +65,10 @@
     "jenkins": {
       "release-type": "simple",
       "component": "jenkins"
+    },
+    "nginx": {
+      "release-type": "simple",
+      "component": "nginx"
     }
   }
 }

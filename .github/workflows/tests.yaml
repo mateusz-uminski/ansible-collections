@@ -62,6 +62,7 @@ jobs:
           - name: nexus
           - name: postgres
           - name: jenkins
+          - name: nginx
         exclude:
           - collection:
               name: redis

@@ -1,0 +1,53 @@
+- name: include debian specific tasks
+  ansible.builtin.include_tasks: debian.yaml
+  when: ansible_os_family | lower == "debian"
+
+- name: include redhat specific tasks
+  ansible.builtin.include_tasks: redhat.yaml
+  when: ansible_os_family | lower == "redhat"
+
+- name: change /etc/nginx ownership to nginx user and group
+  ansible.builtin.file:
+    path: /etc/nginx
+    state: directory
+    owner: nginx
+    group: nginx
+    recurse: true
+  become: true
+
+- name: remove default vhost config file
+  ansible.builtin.file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+  become: true
+
+- name: render nginx vhost config file
+  ansible.builtin.template:
+    src: vhost.conf.j2
+    dest: /etc/nginx/conf.d/vhost.conf
+    owner: nginx
+    group: nginx
+    mode: 0644
+  become: true
+  notify: reload service
+
+- name: render nginx config file
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: nginx
+    group: nginx
+    mode: 0644
+    validate: nginx -t -c %s
+  become: true
+  notify: reload service
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers
