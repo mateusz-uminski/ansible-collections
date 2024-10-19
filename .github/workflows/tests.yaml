@@ -64,6 +64,7 @@ jobs:
           - name: jenkins
           - name: nginx
           - name: ssh
+          - name: iptables
         exclude:
           - collection:
               name: redis
