@@ -1,0 +1,7 @@
+ssh_authorized_keys_fallback_dir: /etc/ssh/authorized_keys
+ssh_port: 22
+ssh_permit_root_login: without-password
+ssh_password_authentication: "no"
+ssh_permit_empty_password: "no"
+ssh_use_pam: "no"
+ssh_x11_forwarding: "no"

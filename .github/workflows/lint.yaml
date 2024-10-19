@@ -15,6 +15,8 @@ jobs:
 
   ansible-lint:
     uses: mateusz-uminski/github-actions/.github/workflows/ansible-lint.yaml@main
+    with:
+      requirements_file: "requirements.yaml"
 
   python-lint:
     uses: mateusz-uminski/github-actions/.github/workflows/python-lint.yaml@main

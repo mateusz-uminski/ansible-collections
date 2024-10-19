@@ -1,0 +1,6 @@
+- name: configure authorized keys
+  ansible.posix.authorized_key:
+    user: "{{ item.remote_user }}"
+    state: present
+    key: "{{ item.allowed_pubkeys }}"
+  loop: "{{ ssh_authorized_keys }}"
