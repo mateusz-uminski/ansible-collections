@@ -17,5 +17,5 @@
   "jenkins": "0.1.0",
   "nginx": "0.1.0",
   "ssh": "0.1.0",
-  "iptables": "0.0.1"
+  "iptables": "0.1.0"
 }
