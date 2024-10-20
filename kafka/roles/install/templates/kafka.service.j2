@@ -1,0 +1,15 @@
+[Unit]
+Description=Kafka {{ kafka_role }}
+After=network.target
+
+[Service]
+Type=simple
+User=kafka
+Group=kafka
+LimitNOFILE=65536
+ExecStart={{ kafka_home_dir }}/bin//kafka-server-start.sh {{ kafka_home_dir }}/{{ kafka_role }}.properties
+ExecStop={{ kafka_home_dir }}/bin//kafka-server-stop.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

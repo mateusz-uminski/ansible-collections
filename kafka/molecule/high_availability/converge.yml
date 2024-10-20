@@ -1,0 +1,40 @@
+- name: converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: install java on debian
+      ansible.builtin.apt:
+        name: openjdk-17-jdk
+        state: present
+      become: true
+      when: ansible_os_family | lower == "debian"
+
+    - name: install java on redhat
+      ansible.builtin.dnf:
+        name: java-17-openjdk
+        state: present
+      become: true
+      when: ansible_os_family | lower == "redhat" and ansible_distribution | lower != "amazon"
+
+    - name: install java on amazonlinux
+      ansible.builtin.dnf:
+        name: java-17-amazon-corretto
+        state: present
+      become: true
+      when: ansible_os_family | lower == "redhat" and ansible_distribution | lower == "amazon"
+
+
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/install  # noqa: role-name[path]
+      vars:
+        # common variables
+        kafka_version: 3.8.0
+        kafka_scala_version: 2.13
+        kafka_role: controller  # controller or broker
+        kafka_data_dir: "/var/lib/kafka/data"
+
+    - name: show kafka cluster id
+      ansible.builtin.debug:
+        var: kafka_cluster_id
+      run_once: true

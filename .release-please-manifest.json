@@ -17,5 +17,6 @@
   "jenkins": "0.1.0",
   "nginx": "0.1.0",
   "ssh": "0.1.0",
-  "iptables": "0.1.0"
+  "iptables": "0.1.0",
+  "kafka": "0.0.1"
 }

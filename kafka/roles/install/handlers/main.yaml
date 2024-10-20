@@ -1,0 +1,12 @@
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  listen: reload systemd
+
+- name: restart kafka service
+  ansible.builtin.service:
+    name: kafka
+    state: restarted
+  become: true
+  listen: restart service

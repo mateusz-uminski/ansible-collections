@@ -1,0 +1,14 @@
+[Unit]
+Description=akhq
+After=network.target
+
+[Service]
+Type=simple
+User=akhq
+Group=akhq
+LimitNOFILE=65536
+ExecStart=java -Dmicronaut.config.files={{ akhq_home_dir }}/config.yaml -jar {{ akhq_home_dir }}/akhq-{{ akhq_version }}-all.jar
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
