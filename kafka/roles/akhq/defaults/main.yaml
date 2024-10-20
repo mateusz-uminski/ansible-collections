@@ -1,0 +1,5 @@
+akhq_version: 0.25.1
+
+akhq_bootstrap_servers:
+  - name: local
+    servers: localhost:9093

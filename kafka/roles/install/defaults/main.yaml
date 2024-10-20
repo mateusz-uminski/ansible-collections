@@ -1,0 +1,19 @@
+# common variables
+kafka_version: 3.8.0
+kafka_scala_version: 2.13
+kafka_role: controller  # controller or broker
+kafka_data_dir: "/var/lib/kafka/data"
+kafka_cluster_id: ""  # example value XeBwhcj6SfiR_07KLddO-w
+
+# broker variables
+kafka_broker_id_offset: 10
+kafka_broker_quorum_voters:
+  - id: 1
+    addr: controller1
+    port: 9093
+  - id: 2
+    addr: controller2
+    port: 9093
+  - id: 2
+    addr: controller3
+    port: 9093

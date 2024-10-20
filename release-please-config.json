@@ -77,6 +77,10 @@
     "iptables": {
       "release-type": "simple",
       "component": "iptables"
+    },
+    "kafka": {
+      "release-type": "simple",
+      "component": "kafka"
     }
   }
 }

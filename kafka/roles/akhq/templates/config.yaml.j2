@@ -1,0 +1,11 @@
+akhq:
+  connections:
+{% for cluster in akhq_bootstrap_servers %}
+    {{ cluster.name }}:
+      properties:
+        bootstrap.servers: "{{ cluster.servers }}"
+{% endfor %}
+
+micronaut:
+  security:
+    enabled: false

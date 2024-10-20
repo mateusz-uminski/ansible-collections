@@ -1,0 +1,73 @@
+- name: include amazonlinux specific tasks
+  ansible.builtin.include_tasks: amazonlinux.yaml
+  when: ansible_os_family | lower == "redhat" and ansible_distribution | lower == "amazon"
+
+- name: set akhq_home_dir fact
+  ansible.builtin.set_fact:
+    akhq_home_dir: "/opt/akhq-{{ akhq_version }}"
+
+- name: create akhq group
+  ansible.builtin.group:
+    name: akhq
+    state: present
+    system: true
+  become: true
+
+- name: create akhq user
+  ansible.builtin.user:
+    name: akhq
+    state: present
+    group: akhq
+    create_home: false
+    shell: /usr/sbin/nologin
+    system: true
+  become: true
+
+- name: create akhq directory
+  ansible.builtin.file:
+    path: "{{ akhq_home_dir }}"
+    state: directory
+    owner: akhq
+    group: akhq
+    mode: 0755
+  become: true
+
+- name: download akhq jar from github
+  ansible.builtin.get_url:
+    url: "https://github.com/tchiotludo/akhq/releases/download\
+      /{{ akhq_version }}/akhq-{{ akhq_version }}-all.jar"
+    dest: "{{ akhq_home_dir }}"
+    owner: akhq
+    group: akhq
+    mode: 0644
+  become: true
+
+- name: render systemd service file
+  ansible.builtin.template:
+    src: akhq.service.j2
+    dest: /etc/systemd/system/akhq.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: reload systemd
+
+- name: render config file
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ akhq_home_dir }}/config.yaml"
+    owner: akhq
+    group: akhq
+    mode: 0644
+  become: true
+  notify: restart service
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: akhq
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers

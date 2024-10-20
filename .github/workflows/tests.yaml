@@ -65,6 +65,7 @@ jobs:
           - name: nginx
           - name: ssh
           - name: iptables
+          - name: kafka
         exclude:
           - collection:
               name: redis

@@ -1,0 +1,114 @@
+- name: include amazonlinux specific tasks
+  ansible.builtin.include_tasks: amazonlinux.yaml
+  when: ansible_os_family | lower == "redhat" and ansible_distribution | lower == "amazon"
+
+- name: set kafka_home_dir fact
+  ansible.builtin.set_fact:
+    kafka_home_dir: "/opt/kafka-{{ kafka_scala_version }}-{{ kafka_version }}"
+
+- name: create kafka group
+  ansible.builtin.group:
+    name: kafka
+    state: present
+    system: true
+  become: true
+
+- name: create kafka user
+  ansible.builtin.user:
+    name: kafka
+    state: present
+    group: kafka
+    create_home: false
+    shell: /usr/sbin/nologin
+    system: true
+  become: true
+
+- name: create home directory
+  ansible.builtin.file:
+    path: "{{ kafka_home_dir }}"
+    state: directory
+    owner: kafka
+    group: kafka
+    mode: 0755
+  become: true
+
+- name: create data directory
+  ansible.builtin.file:
+    path: "{{ kafka_data_dir }}"
+    state: directory
+    owner: kafka
+    group: kafka
+    mode: 0755
+  become: true
+
+- name: download kafka from apache archive
+  ansible.builtin.unarchive:
+    src: "https://archive.apache.org/dist/kafka/{{ kafka_version }}\
+          /kafka_{{ kafka_scala_version }}-{{ kafka_version }}.tgz"
+    dest: "{{ kafka_home_dir }}"
+    owner: kafka
+    group: kafka
+    remote_src: true
+    extra_opts: ['--strip-components=1', '--show-stored-names']
+
+- name: check if kafka is already installed
+  ansible.builtin.stat:
+    path: /etc/systemd/system/kafka.service
+  register: kafka_systemd_service_file
+
+- name: generate kafka cluster ID
+  run_once: true
+  when:
+    - kafka_role == "controller"
+    - kafka_cluster_id == ""
+    - not kafka_systemd_service_file.stat.exists
+  block:
+    - name: generate type4 uuid
+      ansible.builtin.command:
+        cmd: "{{ kafka_home_dir }}/bin/kafka-storage.sh random-uuid"  # noqa: no-changed-when
+      register: kafka_random_uuid
+
+    - name: set kafka_cluster_id fact
+      ansible.builtin.set_fact:
+        kafka_cluster_id: "{{ kafka_random_uuid.stdout }}"
+      loop: "{{ ansible_play_hosts }}"
+
+- name: render properties file
+  ansible.builtin.template:
+    src: "{{ kafka_role }}.properties.j2"
+    dest: "{{ kafka_home_dir }}/{{ kafka_role }}.properties"
+    owner: kafka
+    group: kafka
+    mode: 0644
+  become: true
+  notify: restart service
+
+- name: format kafka storage directory as kafka user
+  ansible.builtin.command:  # noqa: no-changed-when
+    cmd: >
+      /bin/su -s /bin/sh -c '{{ kafka_home_dir }}/bin/kafka-storage.sh format
+      -t {{ kafka_cluster_id }}
+      -c {{ kafka_home_dir }}/{{ kafka_role }}.properties' kafka
+  become: true
+  when:
+    - not kafka_systemd_service_file.stat.exists
+
+- name: render systemd service file
+  ansible.builtin.template:
+    src: kafka.service.j2
+    dest: /etc/systemd/system/kafka.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: reload systemd
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: kafka
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers
