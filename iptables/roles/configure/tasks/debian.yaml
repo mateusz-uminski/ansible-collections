@@ -1,0 +1,21 @@
+- name: install python3-apt package
+  ansible.builtin.apt:
+    name: python3-apt
+    state: present
+  become: true
+
+- name: gather package facts
+  ansible.builtin.package_facts:
+
+- name: ensure ufw is stopped and disabled
+  ansible.builtin.service:
+    name: ufw
+    state: stopped
+    enabled: false
+  when: "'ufw' in ansible_facts.packages"
+
+- name: install iptables
+  ansible.builtin.apt:
+    name: iptables
+    state: present
+  become: true

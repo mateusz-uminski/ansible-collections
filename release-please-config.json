@@ -73,6 +73,10 @@
     "ssh": {
       "release-type": "simple",
       "component": "ssh"
+    },
+    "iptables": {
+      "release-type": "simple",
+      "component": "iptables"
     }
   }
 }

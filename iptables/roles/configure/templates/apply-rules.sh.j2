@@ -1,0 +1,58 @@
+#! /bin/bash
+
+# set the default rules for each of the built-in chains
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+
+{% if iptables_flush_all_rules %}
+# flush nat table
+iptables -t nat -F
+# flush mangle table
+iptables -t mangle -F
+# flush all chains
+iptables -F
+# flush all non-default chains
+iptables -X
+{% endif %}
+
+# allow everything received from loopback interface
+iptables -A INPUT -i lo -j ACCEPT
+# allow everything sent on loopback interface
+iptables -A OUTPUT -o lo -j ACCEPT
+
+# allow incoming ping requests
+iptables -A INPUT -p icmp -j ACCEPT
+# allow outgoing ping requests
+iptables -A OUTPUT -p icmp -j ACCEPT
+
+# allow traffic to an ntp server for time synchronization
+iptables -A OUTPUT -p udp --dport 123 -j ACCEPT
+iptables -A INPUT -p udp --sport 123 -j ACCEPT
+
+# allow incoming traffic for connections initiated by the server
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# allow outgoing traffic for connections initiated by a client
+iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED -j ACCEPT
+
+{% for tcp_port in iptables_allowed_tcp_ports %}
+iptables -A INPUT -p tcp --dport {{ tcp_port }} -j ACCEPT
+{% endfor %}
+
+{% if iptables_debug %}
+# log everything (only for debugging)
+iptables -A INPUT -j LOG
+{% endif %}
+
+{% if iptables_log_dropped_packets %}
+# log dropped incoming requests
+iptables -A INPUT -m limit --limit {{ iptables_log_rate_limit }} -j LOG --log-level 7 --log-prefix "iptables dropped: "
+{% endif %}
+
+{% for rule in iptables_custom_rules %}
+{{ rule }}
+{% endfor %}
+
+# drop traffic that was not accepted
+iptables -A INPUT -j DROP

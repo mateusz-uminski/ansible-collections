@@ -1,0 +1,45 @@
+- name: include debian specific tasks
+  ansible.builtin.include_tasks: debian.yaml
+  when: ansible_os_family == "Debian"
+
+- name: include redhat specific tasks
+  ansible.builtin.include_tasks: redhat.yaml
+  when: ansible_os_family == "RedHat"
+
+- name: create config directory
+  ansible.builtin.file:
+    path: "{{ iptables_conf_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+
+- name: render iptables rules
+  ansible.builtin.template:
+    src: apply-rules.sh.j2
+    dest: "{{ iptables_conf_dir }}/apply-rules.sh"
+    owner: root
+    group: root
+    mode: 0744
+  notify: restart service
+
+- name: render systemd service file
+  ansible.builtin.template:
+    src: iptables-rules.service.j2
+    dest: /etc/systemd/system/iptables-rules.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  notify: reload systemd
+
+- name: ensure service is started and enabled
+  ansible.builtin.service:
+    name: iptables-rules
+    state: started
+    enabled: true
+  become: true
+
+- name: flush handlers
+  ansible.builtin.meta: flush_handlers

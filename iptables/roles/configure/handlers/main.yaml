@@ -1,0 +1,12 @@
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  listen: reload systemd
+
+- name: restart iptables-rules service
+  ansible.builtin.service:
+    name: iptables-rules
+    state: restarted
+  become: true
+  listen: restart service

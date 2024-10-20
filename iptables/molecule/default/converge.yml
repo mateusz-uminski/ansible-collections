@@ -1,0 +1,17 @@
+- name: converge
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: import ansible role
+      ansible.builtin.import_role:
+        name: ../../roles/configure  # noqa: role-name[path]
+      vars:
+        iptables_conf_dir: /etc/iptables
+        iptables_flush_all_rules: true
+        iptables_debug: false
+        iptables_log_dropped_packets: true
+        iptables_log_rate_limit: 5/min
+        iptables_allowed_tcp_ports:
+          - 22
+        iptables_custom_rules:
+          - "iptables -A INPUT -s 203.0.113.51 -j DROP"
