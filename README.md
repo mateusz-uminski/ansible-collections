@@ -11,11 +11,14 @@ Feel free to explore and copy everything you want. Enjoy!
 
 
 # Requirements
+
 1. Python3
 
 
 # Prerequisites
-1. Configure environment:
+
+## Configure environment
+
 ```sh
 cd $(git rev-parse --show-toplevel)
 python3 -m venv venv/
@@ -31,6 +34,13 @@ pip install -r requirements.txt
 ```sh
 cd $(git rev-parse --show-toplevel)
 make test platform=debian12-systemd collection=docker
+```
+
+## Execute molecule tests for a given collection, platform and scenario. Do not destroy molecule instances
+```sh
+cd $(git rev-parse --show-toplevel)
+cd docker
+MOLECULE_PLATFORM_IMAGE=debian12-systemd molecule test --scenario-name=default --destroy=never
 ```
 
 ## Execute molecule tests for a given collection on all platforms
