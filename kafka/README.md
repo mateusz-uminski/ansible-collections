@@ -1,7 +1,7 @@
 # kafka
 
 Ansible collection that automates the setup of Apache Kafka in Kraft mode, with optional high availability (HA) configuration. It includes the following roles:
-- **install**: installs kafka kraft controllers, optionally configures controllers in HA mode, or installs brokers and connect them to a given Kafka cluster.
+- **install**: installs kafka controllers in kraft mode, optionally configures controllers in HA mode, or installs brokers and connect them to a given Kafka cluster.
 - **akhq**: Installs AKHQ and connects it to a specified Kafka cluster for management and monitoring.
 
 
